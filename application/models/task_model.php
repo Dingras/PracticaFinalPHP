@@ -3,6 +3,7 @@ class task_model extends CI_Model{
     protected $table = "tasks";
     protected $pk = "id";
     protected $fk = "user_id";
+    protected $status = "status";
 
     public function getAll($user=null){
         if (!is_null($user)){
@@ -48,6 +49,14 @@ class task_model extends CI_Model{
             $this->db->where($this->pk,$id);
             $this->db->limit(1);
             $this->db->update($this->table,$data);
+        }
+    }
+
+    public function setState($id=null,$state=null){
+        if (!is_null($id)){
+            $this->db->where($this->pk,$id);
+            $this->db->set($this->status,$state);
+            $this->db->update($this->table);
         }
     }
 }

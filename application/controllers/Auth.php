@@ -24,7 +24,10 @@ class Auth extends CI_Controller {
 			$this->session->set_userdata(["user_id" => $result]);
 			redirect("Task");
 		}else{
-			redirect("Auth");
+			$error["error"]="Las credenciales ingresadas son invalidas, intente nuevamente.";
+			$this->load->view('header');
+			$this->load->view('login',$error);
+			$this->load->view('footer');
 		}
 	}
 	public function exit(){

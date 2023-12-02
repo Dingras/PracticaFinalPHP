@@ -46,9 +46,21 @@ class Task extends CI_Controller {
 
     public function edit($id)
 	{
+
 		$task["title"]=$this->input->post("title");
 		$task["description"]=$this->input->post("description");
 		$this->task_model->update($id,$task);
+		redirect("Task");
+	}
+
+	public function change_state($id=null,$state=null){
+		if (!is_null($id)){
+			if ($state==0){
+				$this->task_model->setState($id,1);
+			}else{
+				$this->task_model->setState($id,0);
+			}
+		}
 		redirect("Task");
 	}
 

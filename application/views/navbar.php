@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark bg-primary">
+<nav class="navbar navbar-dark bg-primary d-flex justify-content-around">
     <a class="navbar-brand" href="<?php echo site_url("Task/form")?>">
         <i class="bi bi-clipboard-plus"> Nueva Tarea</i>
     </a>
