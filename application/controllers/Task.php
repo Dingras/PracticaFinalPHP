@@ -6,10 +6,10 @@ class Task extends CI_Controller {
 	public function __construct(){
         parent :: __construct();
         $this->load->model("task_model");
+		$this->load->library("form_validation");
     }
 
-	public function index()
-	{
+	public function index(){
 		if ($this->session->userdata('user_id')){
 			$data["tasks"]=$this->task_model->getAll($this->session->userdata('user_id'));
 			$this->load->view('header');
@@ -22,35 +22,49 @@ class Task extends CI_Controller {
 	}
 
 	public function form($id=null){
+		$this->load->view('header');
+		$this->load->view('navbar');
+		if (is_null($id)){
+			$this->load->view('form_task');
+		}else{
+			$data["task"] = $this->task_model->getById($id);
+			$this->load->view('form_task',$data);
+		}
+		$this->load->view('footer');
+	}
+
+    public function new(){
+		$this->form_validation->set_rules("title","title","required");
+		$this->form_validation->set_rules("description","description","required");
+		if ($this->form_validation->run()===TRUE){
+			if ($this->session->userdata('user_id')){
+				$task["user_id"]=$this->session->userdata('user_id');
+				$task["title"]=$this->input->post("title");
+				$task["description"]=$this->input->post("description");
+				$this->task_model->create($task);
+			}
+			redirect("Task");
+		}else{
+			$data["form_error"] = "Complete todos los datos requeridos";
 			$this->load->view('header');
 			$this->load->view('navbar');
-			if (is_null($id)){
-				$this->load->view('form_task');
-			}else{
-				$data["task"] = $this->task_model->getById($id);
-				$this->load->view('form_task',$data);
-			}
+			$this->load->view('form_task',$data);
 			$this->load->view('footer');
+		}
 	}
 
-    public function new()
-	{
-		if ($this->session->userdata('user_id')){
-			$task["user_id"]=$this->session->userdata('user_id');
+    public function edit($id){
+		$this->form_validation->set_rules("title","title","required");
+		$this->form_validation->set_rules("description","description","required");
+		if ($this->form_validation->run()===TRUE){
 			$task["title"]=$this->input->post("title");
 			$task["description"]=$this->input->post("description");
-			$this->task_model->create($task);
+			$this->task_model->update($id,$task);
+			redirect("Task");
+		}else{
+			$this->session->set_flashdata('form_error', 'Complete todos los datos requeridos');
+			redirect("Task/form/{$id}");
 		}
-		redirect("Task");
-	}
-
-    public function edit($id)
-	{
-
-		$task["title"]=$this->input->post("title");
-		$task["description"]=$this->input->post("description");
-		$this->task_model->update($id,$task);
-		redirect("Task");
 	}
 
 	public function change_state($id=null,$state=null){
@@ -64,8 +78,7 @@ class Task extends CI_Controller {
 		redirect("Task");
 	}
 
-    public function delete($id=null)
-	{
+    public function delete($id=null){
 		$this->task_model->delete($id);
 		redirect("Task");
 	}

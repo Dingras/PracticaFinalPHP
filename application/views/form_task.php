@@ -1,5 +1,17 @@
 <div class="card w-50 mx-auto my-4">
     <div class="card-body">
+        <?php
+        if($this->session->flashdata('form_error')!=null){
+            $form_error = $this->session->flashdata('form_error');
+        }
+        if(isset($form_error)){
+            ?>
+            <div class="alert alert-warning" role="alert">
+                <?php echo $form_error; ?>
+            </div>
+            <?php
+        }
+        ?>
         <form method="post" action="<?php echo !isset($task) ? site_url("Task/new") : site_url("Task/edit/".$task["id"])?>">
             <div class="form-group">
                 <label>Titulo</label>
